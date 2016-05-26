@@ -1,4 +1,6 @@
-﻿using Microsoft.Owin.Hosting;
+﻿using SimpleWebServer.Hello;
+using Microsoft.Owin;
+using Microsoft.Owin.Hosting;
 using Owin;
 using System;
 using System.Collections.Generic;
@@ -6,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication1
+namespace SimpleWebServer
 {
     class Program
     {
@@ -33,11 +35,15 @@ namespace ConsoleApplication1
                 context.Response.ContentType = "text/HTML";
                 context.Response.StatusCode = 200;
 
-                if (path.Value == "/hello")
+                // /hello/{name}
+                if (path.StartsWithSegments(new PathString("/hello")))
                 {
-                    return context.Response.WriteAsync("Hello World!");
+                    var name = path.Value.Substring(7);
+
+                    return new HelloController().Index(context, name);
                 }
 
+                // /goodbye
                 if(path.Value == "/goodbye")
                 {
                     return context.Response.WriteAsync("Goodbye.");
