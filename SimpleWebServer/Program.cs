@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SimpleWebServer.Goodbye;
 using SimpleWebServer.Framework;
+using SimpleWebServer.Reader;
 
 namespace SimpleWebServer
 {
@@ -32,12 +33,17 @@ namespace SimpleWebServer
         {
             var iocContainer = new SimpleIoc();
 
-            iocContainer.Register<HelloController, HelloController>(
+            iocContainer.Register<HelloController>(
                 innerIoc => new HelloController(innerIoc.Resolve<IOwinContext>()));
 
-            iocContainer.Register<GoodbyeController, GoodbyeController>(
+            iocContainer.Register<GoodbyeController>(
                 innerIoc => new GoodbyeController(innerIoc.Resolve<IOwinContext>()));
-            
+
+            iocContainer.Register<IReader>(
+                innerIoc => new BeatlesReader());
+
+            iocContainer.Register<ReaderController>(
+                innerIoc => new ReaderController(innerIoc.Resolve<IOwinContext>(), innerIoc.Resolve<IReader>()));
 
 
             var router = new Router((ioc) => {
@@ -54,16 +60,15 @@ namespace SimpleWebServer
                 return ioc.Resolve<HelloController>().Index(name);
             });
 
-            router.AddRoute("/goodbye", (ioc) =>
-            {
-                return ioc.Resolve<GoodbyeController>().Index();
-            });
+            router.AddRoute("/goodbye", (ioc) => ioc.Resolve<GoodbyeController>().Index());
 
+            router.AddRoute("/reader", (ioc) => ioc.Resolve<ReaderController>().Index());
 
+            appBuilder.UseErrorPage();
             appBuilder.Run(context =>
             {
                 var scoped_ioc = iocContainer.Scoped();
-                scoped_ioc.Register<IOwinContext, IOwinContext>(_ => context);
+                scoped_ioc.Register<IOwinContext>(_ => context);
 
                 // default ContentType
                 context.Response.ContentType = "text/HTML";

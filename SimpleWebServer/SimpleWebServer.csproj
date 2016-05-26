@@ -71,6 +71,11 @@
     <Compile Include="Hello\HelloController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reader\BeatlesReader.cs" />
+    <Compile Include="Reader\BrokenTestReader.cs" />
+    <Compile Include="Reader\IReader.cs" />
+    <Compile Include="Reader\ReaderController.cs" />
+    <Compile Include="Reader\RecipeReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

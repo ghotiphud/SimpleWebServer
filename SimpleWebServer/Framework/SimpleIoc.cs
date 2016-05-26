@@ -16,8 +16,8 @@ namespace SimpleWebServer.Framework
             _parent = parent;
         }
 
-        public void Register<TTypeToResolve, TConcrete>(Func<SimpleIoc, TConcrete> resolveFunc)
-            where TConcrete : class
+        public void Register<TTypeToResolve>(Func<SimpleIoc, TTypeToResolve> resolveFunc)
+            where TTypeToResolve : class
         {
             _typeResolvers.Add(typeof(TTypeToResolve), resolveFunc);
         }

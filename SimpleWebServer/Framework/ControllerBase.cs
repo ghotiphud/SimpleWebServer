@@ -15,5 +15,10 @@ namespace SimpleWebServer.Framework
         {
             _context = context;
         }
+
+        protected Task WriteTextAsync(string str)
+        {
+            return _context.Response.WriteAsync(str);
+        }
     }
 }
