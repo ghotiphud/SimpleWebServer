@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimpleWebServer.Goodbye;
+using SimpleWebServer.Framework;
 
 namespace SimpleWebServer
 {
@@ -24,34 +25,35 @@ namespace SimpleWebServer
             }
         }
 
-        
+
         // This code configures Web API. The Startup class is specified as a type
         // parameter in the WebApp.Start method.
         public static void Configuration(IAppBuilder appBuilder)
         {
-            appBuilder.Run(context => {
-                var path = context.Request.Path;
+            var router = new Router((context) => {
+                context.Response.StatusCode = 404;
+                return context.Response.WriteAsync("404");
+            });
 
+            router.AddRoute("/hello", (context) =>
+            {
+                var name = context.Request.Path.Value.Substring(7);
+
+                return new HelloController(context).Index(name);
+            });
+
+            router.AddRoute("/goodbye", (context) =>
+            {
+                return new GoodbyeController(context).Index();
+            });
+
+            appBuilder.Run(context =>
+            {
                 // default ContentType
                 context.Response.ContentType = "text/HTML";
                 context.Response.StatusCode = 200;
 
-                // /hello/{name}
-                if (path.StartsWithSegments(new PathString("/hello")))
-                {
-                    var name = path.Value.Substring(7);
-
-                    return new HelloController(context).Index(name);
-                }
-
-                // /goodbye
-                if(path.Value == "/goodbye")
-                {
-                    return new GoodbyeController(context).Index();
-                }
-
-                context.Response.StatusCode = 404;
-                return context.Response.WriteAsync("404");
+                return router.Run(context);
             });
         }
     }
