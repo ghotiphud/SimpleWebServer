@@ -27,8 +27,24 @@ namespace ConsoleApplication1
         public static void Configuration(IAppBuilder appBuilder)
         {
             appBuilder.Run(context => {
-                context.Response.ContentType = "text/plain";
-                return context.Response.WriteAsync("Hello World!");
+                var path = context.Request.Path;
+
+                // default ContentType
+                context.Response.ContentType = "text/HTML";
+                context.Response.StatusCode = 200;
+
+                if (path.Value == "/hello")
+                {
+                    return context.Response.WriteAsync("Hello World!");
+                }
+
+                if(path.Value == "/goodbye")
+                {
+                    return context.Response.WriteAsync("Goodbye.");
+                }
+
+                context.Response.StatusCode = 404;
+                return context.Response.WriteAsync("404");
             });
         }
     }
