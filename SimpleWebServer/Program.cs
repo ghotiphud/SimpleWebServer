@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleWebServer.Goodbye;
 
 namespace SimpleWebServer
 {
@@ -40,13 +41,13 @@ namespace SimpleWebServer
                 {
                     var name = path.Value.Substring(7);
 
-                    return new HelloController().Index(context, name);
+                    return new HelloController(context).Index(name);
                 }
 
                 // /goodbye
                 if(path.Value == "/goodbye")
                 {
-                    return context.Response.WriteAsync("Goodbye.");
+                    return new GoodbyeController(context).Index();
                 }
 
                 context.Response.StatusCode = 404;
